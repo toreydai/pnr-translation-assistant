@@ -1,0 +1,3 @@
+# The Lambda runtime already bundles boto3/botocore; this file pins the
+# application's direct dependency explicitly for local development and tests.
+boto3>=1.34

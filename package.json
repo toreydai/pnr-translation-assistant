@@ -1,0 +1,23 @@
+{
+  "name": "pnr-translation-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy",
+    "deploy:web": "node scripts/deploy_web.js",
+    "diff": "cdk diff",
+    "test": "python3 -m unittest discover -s tests -p 'test_*.py'"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.200.0",
+    "constructs": "^10.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "aws-cdk": "^2.1018.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

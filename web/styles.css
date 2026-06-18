@@ -1,0 +1,276 @@
+:root {
+  color-scheme: light;
+  --bg: #f7f8fa;
+  --panel: #ffffff;
+  --text: #16191f;
+  --muted: #687078;
+  --line: #d5dbdb;
+  --primary: #ff9900;
+  --primary-dark: #ec7211;
+  --secondary: #f2f3f3;
+  --danger: #d13212;
+  --ok: #037f0c;
+  --code: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.app {
+  width: min(920px, calc(100vw - 32px));
+  margin: 32px auto;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 30px;
+  line-height: 1.2;
+  margin-top: 4px;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
+.eyebrow,
+label,
+.result-header p,
+.secondary-actions span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.converter,
+.result {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.result {
+  margin-top: 16px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+textarea,
+pre {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+}
+
+textarea {
+  padding: 12px;
+  resize: vertical;
+}
+
+.request-input {
+  min-height: 130px;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.hidden {
+  display: none;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.examples {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.examples button {
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 500;
+  padding: 8px 11px;
+}
+
+.examples button:hover {
+  background: var(--secondary);
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 9px 16px;
+  background: var(--primary);
+  color: #111;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: var(--secondary);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.status {
+  min-width: 82px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  padding: 7px 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.status.ok {
+  color: var(--ok);
+}
+
+.status.error {
+  color: var(--danger);
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.meta span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 5px 8px;
+}
+
+.command-wrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.command-box {
+  min-height: 68px;
+  background: var(--code);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.mono,
+.json {
+  font-family: Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.secondary-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.message {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  padding: 10px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.debug-panel {
+  margin-top: 12px;
+}
+
+.json {
+  min-height: 100px;
+  max-height: 260px;
+  overflow: auto;
+  padding: 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 720px) {
+  .app {
+    width: min(100vw - 20px, 920px);
+    margin: 16px auto;
+  }
+
+  .hero,
+  .result-header,
+  .command-wrap {
+    display: block;
+  }
+
+  .status,
+  .meta {
+    margin-top: 10px;
+  }
+
+  .command-wrap button {
+    margin-top: 8px;
+    width: 100%;
+  }
+}

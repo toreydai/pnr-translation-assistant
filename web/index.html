@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PNR 指令转换助手</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <div>
+          <p id="connectionStatus" class="eyebrow">正在连接演示环境...</p>
+          <h1>PNR 指令转换助手</h1>
+          <p class="subtitle">输入一句业务需求，系统自动识别行程要素并生成可复制的 PNR 指令。</p>
+        </div>
+        <div class="status" id="status">就绪</div>
+      </header>
+
+      <section class="converter">
+        <label for="userText">自然语言需求</label>
+        <textarea id="userText" class="request-input">下个月23号13点50北京到成都中转上海东航</textarea>
+        <textarea id="pnrContext" class="hidden">{
+  "passenger_refs": ["P1"],
+  "segment_refs": ["S1", "S2"],
+  "version": "v1"
+}</textarea>
+
+        <div class="controls">
+          <button id="translate">生成 PNR 指令</button>
+          <div class="examples" id="examples" aria-label="示例场景">
+            <button type="button" data-example="flight">中转查询</button>
+            <button type="button" data-example="roundtrip">往返查询</button>
+            <button type="button" data-example="multicity">多段行程</button>
+            <button type="button" data-example="direct">直飞查询</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="result">
+        <div class="result-header">
+          <div>
+            <h2>生成结果</h2>
+            <p id="resultHint">等待输入需求</p>
+          </div>
+          <div class="meta">
+            <span id="intent">-</span>
+            <span id="translationStatus">-</span>
+            <span id="risk">-</span>
+          </div>
+        </div>
+
+        <div class="command-wrap">
+          <textarea id="commandBox" class="mono command-box" readonly placeholder="生成的 PNR 指令会显示在这里"></textarea>
+          <button id="copyCommand" class="secondary" disabled>复制</button>
+        </div>
+
+        <div class="secondary-actions">
+          <button id="execute" class="secondary" disabled>确认执行</button>
+          <span id="executionHint">可先复制指令进行核对</span>
+        </div>
+        <div id="executionMessage" class="message hidden">确认执行后，系统会在这里显示处理结果。</div>
+      </section>
+
+      <details class="debug-panel hidden">
+        <summary>技术详情</summary>
+        <pre id="contextDebug" class="json"></pre>
+        <pre id="translationJson" class="json"></pre>
+        <pre id="executionJson" class="json"></pre>
+      </details>
+    </main>
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

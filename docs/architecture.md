@@ -1,4 +1,6 @@
-# 自然语言到 PNR 机器指令翻译系统
+# 架构文档
+
+> 自然语言到 PNR 机器指令翻译系统
 
 ## 1. 目的
 
@@ -80,6 +82,47 @@ PNR Translation Service
   |
   v
 Audit Log / Metrics / Evaluation Dataset
+```
+
+### 架构图（Mermaid）
+
+```mermaid
+flowchart TB
+  User["用户 / 客服系统"]
+  Edge["API Gateway / ALB"]
+  Auth["AuthN / AuthZ\nJWT claims：租户/角色/权限"]
+
+  subgraph Service["PNR Translation Service (ECS Fargate / EKS)"]
+    PII["PII Redactor\n姓名/证件/手机/邮箱/PNR 占位符替换"]
+    Ctx["Context Loader\nPNR Context Store · 当前 PNR 状态"]
+    Retr["Retrieval Service\n指令库/术语库/样例库/规则库"]
+    Val["PNR DSL Validator\nschema/语法/业务规则/权限"]
+    Render["PNR Command Renderer\n确定性 DSL 渲染 + 反解析一致性校验"]
+    Risk["Risk Policy Engine\n低/中/高风险分级"]
+  end
+
+  subgraph BedrockG["Amazon Bedrock Runtime"]
+    Kimi1["moonshotai.kimi-k2.5\n主链路：意图/实体/排序"]
+    Kimi2["moonshot.kimi-k2-thinking\n复核：复杂请求/规则冲突"]
+  end
+
+  Review["Human Review / Confirmation\nmaker-checker 强制审核人≠发起人"]
+  AuditStore["Audit Store\n审计记录"]
+  Adapter["PNR/GDS Adapter\n（当前为占位实现）"]
+  Metrics["Audit Log / Metrics / Evaluation Dataset"]
+
+  User --> Edge --> Auth --> Service
+  PII --> Ctx --> Retr
+  Retr --> Kimi1
+  Kimi1 -.复杂场景.-> Kimi2
+  Kimi1 --> Val
+  Kimi2 --> Val
+  Val --> Render --> Risk
+  Risk -->|低风险白名单| Adapter
+  Risk -->|中风险| Review
+  Risk -->|高风险/低置信度| Review
+  Review --> Adapter
+  Service --> AuditStore --> Metrics
 ```
 
 ## 5. 核心模块
@@ -299,6 +342,48 @@ risk_policy:
 9. PNR Command Renderer 生成脱敏指令预览
 10. Risk Policy Engine 判断是否需要确认或人工审核
 11. 返回预览结果、解释和下一步动作
+```
+
+## 请求路径图
+
+以「翻译预览流程」为例：
+
+```mermaid
+sequenceDiagram
+  participant U as 用户/客服系统
+  participant Auth as AuthN/AuthZ
+  participant Svc as PNR Translation Service
+  participant PII as PII Redactor
+  participant Ret as Retrieval Service
+  participant LLM as Bedrock moonshotai.kimi-k2.5
+  participant Val as PNR DSL Validator
+  participant Ren as PNR Command Renderer
+  participant Risk as Risk Policy Engine
+
+  U->>Auth: 自然语言请求（含 JWT claims）
+  Auth-->>Svc: 租户/角色/权限上下文
+  Svc->>Svc: 加载当前 PNR 上下文
+  Svc->>PII: 脱敏（姓名/证件/手机/邮箱/PNR→占位符）
+  PII-->>Svc: 脱敏后文本 + 映射表
+  Svc->>Svc: 轻量初判生成候选 intent shortlist
+  Svc->>Ret: 按候选 intent 召回指令/术语/样例/规则
+  Ret-->>Svc: 召回证据
+  Svc->>LLM: 脱敏文本 + 证据 → 请求结构化中间表示
+  LLM-->>Svc: JSON（intent/entities/risk_level/confidence）
+  Svc->>Svc: JSON schema 校验（失败重试一次）
+  Svc->>Val: 校验字段/规则/PNR 状态
+  Val-->>Svc: 校验通过
+  Svc->>Ren: 渲染最终指令 + 反解析一致性校验
+  Ren-->>Svc: 脱敏指令预览
+  Svc->>Risk: 判断风险等级
+  alt 低风险 + 白名单 + 高置信度
+    Risk-->>Svc: 可自动执行
+  else 中风险
+    Risk-->>Svc: 需用户确认
+  else 高风险 / 低置信度 / 多意图
+    Risk-->>Svc: 转人工审核（maker-checker）
+  end
+  Svc-->>U: 返回预览结果、解释和下一步动作
 ```
 
 ### 6.2 追问流程

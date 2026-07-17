@@ -24,7 +24,7 @@
 
 - [docs/architecture.md](docs/architecture.md)：架构图、核心模块、API、数据模型、安全、实施计划与风险。
 - [docs/deployment.md](docs/deployment.md)：部署、接口调用、可观测性与部署方案。
-- [docs/test-manual.md](docs/test-manual.md)：测试用例与验证方法。
+- [docs/testing.md](docs/testing.md)：测试用例与验证方法。
 
 ## 快速开始
 
@@ -54,7 +54,7 @@ docs/              设计、部署、测试文档
 
 ## License
 
-MIT
+MIT - see the [LICENSE](LICENSE) file for details.
 
 ## 免责声明
 
